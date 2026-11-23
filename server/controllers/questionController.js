@@ -189,6 +189,40 @@ const filterByType = async (req, res) => {
     });
   }
 };
+// Phân trang danh sách câu hỏi
+const paginateQuestions = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const questions = await Question.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalQuestions = await Question.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      message: "Lấy danh sách câu hỏi thành công",
+      data: questions,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalQuestions / limit),
+        totalQuestions,
+        limit,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi phân trang câu hỏi",
+      error: error.message,
+    });
+  }
+};
 
 
 module.exports = {
@@ -200,4 +234,5 @@ module.exports = {
   filterBySubject,
   filterByDifficulty,
   filterByType,
+  paginateQuestions,
 };
