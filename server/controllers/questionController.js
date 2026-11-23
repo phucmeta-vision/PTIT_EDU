@@ -98,9 +98,106 @@ const deleteQuestion = async (req, res) => {
   }
 };
 
+// Tìm kiếm câu hỏi theo từ khóa
+const searchQuestions = async (req, res) => {
+  try {
+    const { keyword } = req.query;
+
+    const questions = await Question.find({
+      content: {
+        $regex: keyword || "",
+        $options: "i",
+      },
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Tìm kiếm câu hỏi thành công",
+      data: questions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi tìm kiếm câu hỏi",
+      error: error.message,
+    });
+  }
+};
+// Lọc câu hỏi theo môn học
+const filterBySubject = async (req, res) => {
+  try {
+    const { subjectId } = req.query;
+
+    const questions = await Question.find({
+      subjectId: subjectId,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Lọc câu hỏi theo môn học thành công",
+      data: questions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi lọc câu hỏi",
+      error: error.message,
+    });
+  }
+};
+// Lọc câu hỏi theo độ khó
+const filterByDifficulty = async (req, res) => {
+  try {
+    const { difficulty } = req.query;
+
+    const questions = await Question.find({
+      difficulty: difficulty,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Lọc câu hỏi theo độ khó thành công",
+      data: questions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi lọc câu hỏi",
+      error: error.message,
+    });
+  }
+};
+// Lọc câu hỏi theo loại
+const filterByType = async (req, res) => {
+  try {
+    const { type } = req.query;
+
+    const questions = await Question.find({
+      type: type,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: "Lọc câu hỏi theo loại thành công",
+      data: questions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi lọc câu hỏi",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  searchQuestions,
+  filterBySubject,
+  filterByDifficulty,
+  filterByType,
 };
